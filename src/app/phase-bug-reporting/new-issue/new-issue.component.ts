@@ -34,7 +34,6 @@ export class NewIssueComponent implements OnInit {
       severity: ['', Validators.required],
       type: ['', Validators.required],
     });
-    
     this.submitButtonText = SUBMIT_BUTTON_TEXT.SUBMIT;
   }
 
