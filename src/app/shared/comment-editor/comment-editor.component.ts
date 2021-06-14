@@ -8,6 +8,7 @@ import {
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ElectronService } from '../../core/services/electron.service';
+import { LoggingService } from '../../core/services/logging.service';
 
 const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
 const BYTES_PER_MB = 1000000;
@@ -24,7 +25,8 @@ export class CommentEditorComponent implements OnInit {
 
   constructor(private uploadService: UploadService,
               private errorHandlingService: ErrorHandlingService,
-              private electronService: ElectronService) {}
+              private electronService: ElectronService,
+              private logger: LoggingService) {}
 
   @Input() commentField: AbstractControl; // Compulsory Input
   @Input() commentForm: FormGroup; // Compulsory Input
@@ -62,6 +64,7 @@ export class CommentEditorComponent implements OnInit {
     }
 
     this.initialSubmitButtonText = this.submitButtonText;
+    this.logger.startSession();
   }
 
   onDragEnter(event) {
@@ -76,6 +79,23 @@ export class CommentEditorComponent implements OnInit {
     }
   }
 
+  checkPlaceHolderOnFocus() {
+    this.logger.info("onfocus event");
+    this.logger.info("commentField value: " + this.commentField.value);
+    this.logger.info("initial value: " + this.initialDescription);
+    if (this.commentField.value === 'No details provided.') {
+      this.commentField.setValue('');
+    }
+  }
+
+  checkPlaceHolderOnBlur() {
+    this.logger.info("blur event");
+    this.logger.info("commentField value: " + this.commentField.value);
+    this.logger.info("initial value: " + this.initialDescription);
+    if (this.commentField.value === '') {
+      this.commentField.setValue('No details provided.');
+    }
+  }
   // Prevent cursor in textarea from moving when file is dragged over it.
   disableCaretMovement(event) {
     event.preventDefault();
@@ -187,6 +207,7 @@ export class CommentEditorComponent implements OnInit {
       this.readAndUploadFile(blob);
     }
   }
+
 
   get isInErrorState(): boolean {
     return !!this.uploadErrorMessage;

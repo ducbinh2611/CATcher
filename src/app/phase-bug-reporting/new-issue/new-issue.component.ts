@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { LabelService } from '../../core/services/label.service';
 import { SUBMIT_BUTTON_TEXT } from '../../shared/view-issue/view-issue.component';
+import { LoggingService } from '../../core/services/logging.service';
 
 @Component({
   selector: 'app-new-issue',
@@ -21,15 +22,19 @@ export class NewIssueComponent implements OnInit {
 
   constructor(private issueService: IssueService, private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService, public labelService: LabelService,
-              private router: Router) { }
+              private router: Router,
+              private logger: LoggingService) { }
 
   ngOnInit() {
+    this.logger.startSession();
+
     this.newIssueForm = this.formBuilder.group({
       title: ['', Validators.required],
       description: ['No details provided.'],
       severity: ['', Validators.required],
       type: ['', Validators.required],
     });
+    this.logger.info("reach here");
 
     this.submitButtonText = SUBMIT_BUTTON_TEXT.SUBMIT;
   }
