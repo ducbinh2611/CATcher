@@ -80,22 +80,17 @@ export class CommentEditorComponent implements OnInit {
   }
 
   checkPlaceHolderOnFocus() {
-    this.logger.info("onfocus event");
-    this.logger.info("commentField value: " + this.commentField.value);
-    this.logger.info("initial value: " + this.initialDescription);
     if (this.commentField.value === 'No details provided.') {
       this.commentField.setValue('');
     }
   }
 
   checkPlaceHolderOnBlur() {
-    this.logger.info("blur event");
-    this.logger.info("commentField value: " + this.commentField.value);
-    this.logger.info("initial value: " + this.initialDescription);
     if (this.commentField.value === '') {
       this.commentField.setValue('No details provided.');
     }
   }
+
   // Prevent cursor in textarea from moving when file is dragged over it.
   disableCaretMovement(event) {
     event.preventDefault();
