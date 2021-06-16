@@ -14,6 +14,8 @@ import { UserRole } from '../../core/models/user.model';
 import { ElectronService } from '../../core/services/electron.service';
 import { LoggingService } from '../../core/services/logging.service';
 import { AppConfig } from '../../../environments/environment';
+import { UserConfirmationComponent } from '../../core/guards/user-confirmation/user-confirmation.component';
+import { MatDialog } from '@angular/material';
 
 @Component({
   selector: 'app-layout-header',
@@ -37,7 +39,9 @@ export class HeaderComponent implements OnInit {
               private issueService: IssueService,
               private errorHandlingService: ErrorHandlingService,
               private githubService: GithubService,
-              private electronService: ElectronService) {
+              private electronService: ElectronService,
+              private dialog: MatDialog
+              ) {
     router.events.pipe(
       filter((e: any) => e instanceof RoutesRecognized),
       pairwise()
@@ -154,6 +158,7 @@ export class HeaderComponent implements OnInit {
   }
 
   logOut() {
-    this.auth.logOut();
+    //this.auth.logOut();
+    const dialogRef = this.dialog.open(UserConfirmationComponent);
   }
 }
