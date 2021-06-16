@@ -13,6 +13,7 @@ import { GithubService } from '../../core/services/github.service';
 import { UserRole } from '../../core/models/user.model';
 import { ElectronService } from '../../core/services/electron.service';
 import { LoggingService } from '../../core/services/logging.service';
+import { DialogService } from '../../core/services/dialog.service';
 import { AppConfig } from '../../../environments/environment';
 import { UserConfirmationComponent } from '../../core/guards/user-confirmation/user-confirmation.component';
 import { MatDialog } from '@angular/material';
@@ -40,7 +41,7 @@ export class HeaderComponent implements OnInit {
               private errorHandlingService: ErrorHandlingService,
               private githubService: GithubService,
               private electronService: ElectronService,
-              private dialog: MatDialog
+              private dialogService: DialogService
               ) {
     router.events.pipe(
       filter((e: any) => e instanceof RoutesRecognized),
@@ -159,6 +160,6 @@ export class HeaderComponent implements OnInit {
 
   logOut() {
     //this.auth.logOut();
-    const dialogRef = this.dialog.open(UserConfirmationComponent);
+    const dialogRef = this.dialogService.openConfirmDialog('test message');
   }
 }
