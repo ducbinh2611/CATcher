@@ -8,6 +8,7 @@ import {
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ElectronService } from '../../core/services/electron.service';
+import { LoggingService } from '../../core/services/logging.service';
 
 const DISPLAYABLE_CONTENT = ['gif', 'jpeg', 'jpg', 'png'];
 const BYTES_PER_MB = 1000000;
@@ -24,13 +25,15 @@ export class CommentEditorComponent implements OnInit {
 
   constructor(private uploadService: UploadService,
               private errorHandlingService: ErrorHandlingService,
-              private electronService: ElectronService) {}
+              private electronService: ElectronService,
+              private logger: LoggingService) {}
 
   @Input() commentField: AbstractControl; // Compulsory Input
   @Input() commentForm: FormGroup; // Compulsory Input
   @Input() id: string; // Compulsory Input
 
   @Input() initialDescription?: string;
+  @Input() defaultValue?: string;
 
   // Allows the comment editor to control the overall form's completeness.
   @Input() isFormPending?: boolean;
@@ -62,6 +65,7 @@ export class CommentEditorComponent implements OnInit {
     }
 
     this.initialSubmitButtonText = this.submitButtonText;
+    this.logger.startSession();
   }
 
   onDragEnter(event) {
@@ -73,6 +77,18 @@ export class CommentEditorComponent implements OnInit {
       this.dropArea.nativeElement.classList.add('highlight-drag-box-disabled');
     } else {
       this.dropArea.nativeElement.classList.add('highlight-drag-box');
+    }
+  }
+
+  checkPlaceHolderOnFocus() {
+    if (this.commentField.value === this.defaultValue) {
+      this.commentField.setValue('');
+    }
+  }
+
+  checkPlaceHolderOnBlur() {
+    if (this.commentField.value === '') {
+      this.commentField.setValue(this.defaultValue);
     }
   }
 
@@ -187,6 +203,7 @@ export class CommentEditorComponent implements OnInit {
       this.readAndUploadFile(blob);
     }
   }
+
 
   get isInErrorState(): boolean {
     return !!this.uploadErrorMessage;
