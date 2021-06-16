@@ -33,6 +33,7 @@ export class CommentEditorComponent implements OnInit {
   @Input() id: string; // Compulsory Input
 
   @Input() initialDescription?: string;
+  @Input() defaultValue?: string;
 
   // Allows the comment editor to control the overall form's completeness.
   @Input() isFormPending?: boolean;
@@ -80,14 +81,14 @@ export class CommentEditorComponent implements OnInit {
   }
 
   checkPlaceHolderOnFocus() {
-    if (this.commentField.value === 'No details provided.') {
+    if (this.commentField.value === this.defaultValue) {
       this.commentField.setValue('');
     }
   }
 
   checkPlaceHolderOnBlur() {
     if (this.commentField.value === '') {
-      this.commentField.setValue('No details provided.');
+      this.commentField.setValue(this.defaultValue);
     }
   }
 

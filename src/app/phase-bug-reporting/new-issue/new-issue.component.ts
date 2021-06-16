@@ -19,7 +19,7 @@ export class NewIssueComponent implements OnInit {
   isFormPending = false;
 
   submitButtonText: string;
-
+  defaultValue = 'No details provided.';
   constructor(private issueService: IssueService, private formBuilder: FormBuilder,
               private errorHandlingService: ErrorHandlingService, public labelService: LabelService,
               private router: Router,
