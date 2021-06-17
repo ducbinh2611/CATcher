@@ -162,7 +162,7 @@ export class HeaderComponent implements OnInit {
   logOut() {
     //this.auth.logOut();
     const dialogRef = this.dialogService.openConfirmDialog('Do you wish to log out?'
-      , 'You have unsaved changes that will be discarded.');
+      , '');
     dialogRef.afterClosed().subscribe(res => {
       console.log(res);
       if (res) {
