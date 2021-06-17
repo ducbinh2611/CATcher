@@ -10,11 +10,12 @@ export class DialogService {
 
     constructor(private dialog: MatDialog) { }
 
-    openConfirmDialog(msg) {
-        this.dialog.open(UserConfirmationComponent, {
+    openConfirmDialog(msg, msg2) {
+        return this.dialog.open(UserConfirmationComponent, {
             data: {
-                message: msg
+                message: msg,
+                message2: msg2
             }
-        })
+        });
     }
 }
