@@ -160,7 +160,6 @@ export class HeaderComponent implements OnInit {
   }
 
   logOut() {
-    //this.auth.logOut();
     const dialogRef = this.dialogService.openConfirmDialog('Do you wish to log out?'
       , '');
     dialogRef.afterClosed().subscribe(res => {

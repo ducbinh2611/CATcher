@@ -9,7 +9,7 @@ import { Observable, of } from 'rxjs';
 })
 export class CanDeactivateIssueGuard implements CanDeactivate<any> {
   constructor(private location: Location, private router: Router,
-              private dialogService : DialogService) {}
+              private dialogService: DialogService) {}
 
   /**
    * Makes the dialog visible to the user.
