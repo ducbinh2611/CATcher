@@ -5,6 +5,8 @@ import { FormErrorComponent } from '../../shared/error-toasters/form-error/form-
 import { HttpErrorResponse } from '@angular/common/http';
 import { RequestError } from '@octokit/request-error';
 import { LoggingService } from './logging.service';
+import internal = require('events');
+import { ComponentType } from '@angular/core/src/render3';
 
 export const ERRORCODE_NOT_FOUND = 404;
 
@@ -14,6 +16,7 @@ const FILTERABLE = ['node_modules'];
   providedIn: 'root',
 })
 export class ErrorHandlingService implements ErrorHandler {
+  static DURATION = 5000;
 
   constructor(private snackBar: MatSnackBar, private logger: LoggingService) {}
 
@@ -50,23 +53,38 @@ export class ErrorHandlingService implements ErrorHandler {
 
     switch (error.status) {
       case 500: // Internal Server Error.
-        this.snackBar.openFromComponent(GeneralMessageErrorComponent, {data: error});
+        this.snackBar.openFromComponent(GeneralMessageErrorComponent, {
+          data: error,
+          duration: ErrorHandlingService.DURATION
+        });
         break;
       case 422: // Form errors
-        this.snackBar.openFromComponent(FormErrorComponent, {data: error});
+        this.snackBar.openFromComponent(FormErrorComponent, {
+          data: error,
+          duration: ErrorHandlingService.DURATION
+        });
         break;
       case 400: // Bad request
       case 401: // Unauthorized
       case 404: // Not found
-        this.snackBar.openFromComponent(GeneralMessageErrorComponent, {data: error});
+        this.snackBar.openFromComponent(GeneralMessageErrorComponent, {
+          data: error,
+          duration: ErrorHandlingService.DURATION
+        });
         break;
       default:
-        this.snackBar.openFromComponent(GeneralMessageErrorComponent, {data: error});
+        this.snackBar.openFromComponent(GeneralMessageErrorComponent, {
+          data: error,
+          duration: ErrorHandlingService.DURATION
+        });
         return;
     }
   }
 
   private handleGeneralError(error: string): void {
-    this.snackBar.openFromComponent(GeneralMessageErrorComponent, {data: {message: error}});
+    this.snackBar.openFromComponent(GeneralMessageErrorComponent, {
+      data: {message: error},
+      duration: ErrorHandlingService.DURATION
+    });
   }
 }

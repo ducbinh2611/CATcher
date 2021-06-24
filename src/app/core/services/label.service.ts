@@ -261,7 +261,7 @@ export class LabelService {
       'font-weight' : '410',
     };
 
-    return styles;
+    return styles; // test
   }
 
 }
