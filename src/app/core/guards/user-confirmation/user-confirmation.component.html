@@ -1,7 +1,8 @@
 <h1 mat-dialog-title>Warning</h1>
 <div mat-dialog-content>
-  <p>Do you wish to leave the page?</p>
-  <p>You have unsaved changes that will be discarded.</p>
+  <p>{{data.message}}</p>
+  <p>{{data.message2}}</p>
+
 </div>
 <div mat-dialog-actions>
   <button mat-raised-button color="primary" (click)="onNoClick()">No, I don't wish to leave</button>
