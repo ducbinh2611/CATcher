@@ -192,6 +192,15 @@ export class GithubService {
     );
   }
 
+  // list label for an issue
+  fetchLabelsOfIssue(id: number) {
+    return from(octokit.issues.listLabelsOnIssue({
+      owner: ORG_NAME,
+      repo: REPO,
+      issue_number: id,
+    })).pipe(map(response => console.log(response)), catchError(err => throwError('Failed to fetch labels.')));
+  }
+
   fetchAllLabels(): Observable<Array<{}>> {
     return from(octokit.issues.listLabelsForRepo({owner: ORG_NAME, repo: REPO, headers: GithubService.IF_NONE_MATCH_EMPTY})).pipe(
       map(response => {
@@ -208,6 +217,11 @@ export class GithubService {
    */
   createLabel(formattedLabelName: string, labelColor: string): void {
     octokit.issues.createLabel({owner: ORG_NAME, repo: REPO, name: formattedLabelName, color: labelColor});
+  }
+
+  // consider change the name of variable
+  deleteLabel(formattedLabelName: string): void {
+    octokit.issues.deleteLabel({owner: ORG_NAME, repo: REPO, name: formattedLabelName});
   }
 
   /**

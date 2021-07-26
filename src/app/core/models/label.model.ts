@@ -10,6 +10,12 @@ export class Label {
     this.labelCategory = labelCategory;
   }
 
+  public getCategory(): string {
+    return (this.labelCategory === undefined || this.labelCategory === '')
+      ? ''
+      : this.labelCategory;
+  }
+  
   /**
    * Returns the name of the label with the format of
    * 'category'.'value' (e.g. severity.Low) if a category exists or

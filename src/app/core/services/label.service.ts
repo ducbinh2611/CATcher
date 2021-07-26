@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { GithubService } from './github.service';
 import { map, flatMap } from 'rxjs/operators';
 import { Label } from '../models/label.model';
-import { Observable, pipe, UnaryFunction } from 'rxjs';
+import { concat, Observable, pipe, UnaryFunction } from 'rxjs';
 
 /* The threshold to decide if color is dark or light.
 A higher threshold value will result in more colors determined to be "dark".
@@ -16,6 +16,8 @@ const COLOR_LIGHT_TEXT  = 'FFFFFF'; // Light color for text with dark background
 const DISPLAY_NAME_SEVERITY = 'Severity';
 const DISPLAY_NAME_BUG_TYPE = 'Bug Type';
 const DISPLAY_NAME_RESPONSE = 'Response';
+const DISPLAY_NAME_STATUS = 'Status';
+
 
 const REQUIRED_LABELS = {
   severity: {
@@ -93,7 +95,10 @@ export class LabelService {
   synchronizeRemoteLabels(): Observable<any> {
       return this.githubService.fetchAllLabels().pipe(
         map((response) => {
-          this.ensureRepoHasRequiredLabels(this.parseLabelData(response), LabelService.getRequiredLabelsAsArray());
+          const actualLabels : Label[] = this.parseLabelData(response);
+          this.sanitizeActualLabesl(actualLabels);
+          const requiredLabels : Label[] = LabelService.getRequiredLabelsAsArray();
+          this.ensureRepoHasRequiredLabels(actualLabels, requiredLabels);
           return response;
         })
       );
@@ -113,6 +118,8 @@ export class LabelService {
       case 'responseTag':
       case 'response':
         return LabelService.responseLabels;
+      case 'status':
+        return LabelService.statusLabels;
     }
   }
 
@@ -128,6 +135,8 @@ export class LabelService {
         return DISPLAY_NAME_BUG_TYPE;
       case 'responseTag':
         return DISPLAY_NAME_RESPONSE;
+      case 'status':
+        return DISPLAY_NAME_STATUS;
     }
   }
 
@@ -152,6 +161,40 @@ export class LabelService {
     }
   }
 
+  private sanitizeActualLabesl(labels: Label[]): void {
+    const invalidLabels: Label[] = [];
+    for (const label of labels) {
+      if (label.getCategory() === '') {
+        continue;
+      } else {
+        this.checkValidityOfCategoryLabel(label, invalidLabels);   
+      }
+    }
+    console.log(invalidLabels);
+    if (invalidLabels.length == 0) {
+      return;
+    } else {
+      // for (const invalidLabel of invalidLabels) {
+      //   this.githubService.deleteLabel(invalidLabel.getFormattedName());
+      // }
+      throw new Error('Unexpected error: the repo has invalid labels')
+    }
+  }
+
+  private checkValidityOfCategoryLabel(label : Label, invalidLabels : Label[]) {
+    const labelCategory = label.getCategory();
+    const requiredCategoryLabels = this.getLabelList(labelCategory);
+    var isValid = false;
+    for (const requiredLabel of requiredCategoryLabels) {
+      if (label.getFormattedName() === requiredLabel.getFormattedName()) {
+        isValid = true;
+        break;
+      }
+    }
+    if (!isValid) {
+      invalidLabels.push(label);
+    }
+  }
   /**
    * Ensures that the repo has the required labels.
    * Compares the actual labels in the repo with the required labels. If an required label is missing,

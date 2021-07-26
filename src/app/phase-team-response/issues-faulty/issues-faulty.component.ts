@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { IssueService } from '../../core/services/issue.service';
+import { GithubService } from '../../core/services/github.service';
 import { IssuesDataTable } from '../../shared/issue-tables/IssuesDataTable';
 import { Issue } from '../../core/models/issue.model';
 import { UserService } from '../../core/services/user.service';
@@ -7,6 +8,7 @@ import { UserRole } from '../../core/models/user.model';
 import { PermissionService } from '../../core/services/permission.service';
 import { ACTION_BUTTONS, IssueTablesComponent } from '../../shared/issue-tables/issue-tables.component';
 import { TABLE_COLUMNS } from '../../shared/issue-tables/issue-tables-columns';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-issues-faulty',
@@ -26,7 +28,7 @@ export class IssuesFaultyComponent implements OnInit, OnChanges {
 
   @ViewChild(IssueTablesComponent) table: IssueTablesComponent;
 
-  constructor(public issueService: IssueService, public userService: UserService,
+  constructor(public issueService: IssueService, public userService: UserService, public githubService: GithubService,
       public permissions: PermissionService) {
     if (userService.currentUser.role === UserRole.Student) {
       this.displayedColumns = [
@@ -66,6 +68,26 @@ export class IssuesFaultyComponent implements OnInit, OnChanges {
       const isDuplicateIssue = (issue: Issue) => !!issue.duplicateOf;
       const isDuplicatedBy = (issue: Issue) =>
             !!this.issueService.issues$.getValue().filter(childIssue => childIssue.duplicateOf === issue.id).length;
+      //var flag = false;
+      //if (issue.id === 249) {
+      const test = (issue : Issue) => {
+        this.githubService.fetchIssueGraphql(issue.id).pipe(
+          map((response) => {
+            const labels = response.labels;
+            // var numOfSeverityLabels = 0;
+
+            // for (const label of labels) {
+            //   if (label.category === 'severity') {
+            //     numOfSeverityLabels++;
+            //   }
+            // }
+            // if (numOfSeverityLabels > 1) { console.log("here"); };
+            console.log(labels);
+          }))
+        };
+
+      test(issue);
+      // }
       return hasTeamResponse(issue) && isDuplicateIssue(issue) && isDuplicatedBy(issue);
     };
   }
@@ -74,3 +96,18 @@ export class IssuesFaultyComponent implements OnInit, OnChanges {
     this.table.issues.filter = filterValue;
   }
 }
+// const test = (issue : Issue, flag: boolean) => {
+//   this.githubService.fetchIssueGraphql(issue.id).pipe(
+//     map((response) => {
+//       const labels = response.labels;
+//       var numOfSeverityLabels = 0;
+
+//       for (const label of labels) {
+//         if (label.category === 'severity') {
+//           numOfSeverityLabels++;
+//         }
+//       }
+//       if (numOfSeverityLabels > 1) {flag = true};
+//     }))
+//   };
+//  test(issue, flag);
