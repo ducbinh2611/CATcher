@@ -95,9 +95,9 @@ export class LabelService {
   synchronizeRemoteLabels(): Observable<any> {
       return this.githubService.fetchAllLabels().pipe(
         map((response) => {
-          const actualLabels : Label[] = this.parseLabelData(response);
+          const actualLabels: Label[] = this.parseLabelData(response);
           this.sanitizeActualLabesl(actualLabels);
-          const requiredLabels : Label[] = LabelService.getRequiredLabelsAsArray();
+          const requiredLabels: Label[] = LabelService.getRequiredLabelsAsArray();
           this.ensureRepoHasRequiredLabels(actualLabels, requiredLabels);
           return response;
         })
@@ -167,24 +167,24 @@ export class LabelService {
       if (label.getCategory() === '') {
         continue;
       } else {
-        this.checkValidityOfCategoryLabel(label, invalidLabels);   
+        this.checkValidityOfCategoryLabel(label, invalidLabels);
       }
     }
     console.log(invalidLabels);
-    if (invalidLabels.length == 0) {
+    if (invalidLabels.length === 0) {
       return;
     } else {
       // for (const invalidLabel of invalidLabels) {
       //   this.githubService.deleteLabel(invalidLabel.getFormattedName());
       // }
-      throw new Error('Unexpected error: the repo has invalid labels')
+      throw new Error('Unexpected error: the repo has invalid labels');
     }
   }
 
-  private checkValidityOfCategoryLabel(label : Label, invalidLabels : Label[]) {
+  private checkValidityOfCategoryLabel(label: Label, invalidLabels: Label[]) {
     const labelCategory = label.getCategory();
     const requiredCategoryLabels = this.getLabelList(labelCategory);
-    var isValid = false;
+    let isValid = false;
     for (const requiredLabel of requiredCategoryLabels) {
       if (label.getFormattedName() === requiredLabel.getFormattedName()) {
         isValid = true;

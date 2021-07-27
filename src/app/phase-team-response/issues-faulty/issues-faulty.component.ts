@@ -68,26 +68,6 @@ export class IssuesFaultyComponent implements OnInit, OnChanges {
       const isDuplicateIssue = (issue: Issue) => !!issue.duplicateOf;
       const isDuplicatedBy = (issue: Issue) =>
             !!this.issueService.issues$.getValue().filter(childIssue => childIssue.duplicateOf === issue.id).length;
-      //var flag = false;
-      //if (issue.id === 249) {
-      const test = (issue : Issue) => {
-        this.githubService.fetchIssueGraphql(issue.id).pipe(
-          map((response) => {
-            const labels = response.labels;
-            // var numOfSeverityLabels = 0;
-
-            // for (const label of labels) {
-            //   if (label.category === 'severity') {
-            //     numOfSeverityLabels++;
-            //   }
-            // }
-            // if (numOfSeverityLabels > 1) { console.log("here"); };
-            console.log(labels);
-          }))
-        };
-
-      test(issue);
-      // }
       return hasTeamResponse(issue) && isDuplicateIssue(issue) && isDuplicatedBy(issue);
     };
   }
@@ -96,18 +76,3 @@ export class IssuesFaultyComponent implements OnInit, OnChanges {
     this.table.issues.filter = filterValue;
   }
 }
-// const test = (issue : Issue, flag: boolean) => {
-//   this.githubService.fetchIssueGraphql(issue.id).pipe(
-//     map((response) => {
-//       const labels = response.labels;
-//       var numOfSeverityLabels = 0;
-
-//       for (const label of labels) {
-//         if (label.category === 'severity') {
-//           numOfSeverityLabels++;
-//         }
-//       }
-//       if (numOfSeverityLabels > 1) {flag = true};
-//     }))
-//   };
-//  test(issue, flag);

@@ -25,6 +25,5 @@ export class GithubGraphqlIssue extends GithubIssue {
         id: node.databaseId,
       })),
     });
-    //console.log(flattenEdges(issue.labels.edges));
   }
 }
