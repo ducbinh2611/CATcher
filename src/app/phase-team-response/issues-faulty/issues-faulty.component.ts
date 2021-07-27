@@ -28,8 +28,7 @@ export class IssuesFaultyComponent implements OnInit, OnChanges {
 
   @ViewChild(IssueTablesComponent) table: IssueTablesComponent;
 
-  constructor(public issueService: IssueService, public userService: UserService, public githubService: GithubService,
-      public permissions: PermissionService) {
+  constructor(public issueService: IssueService, public userService: UserService, public permissions: PermissionService) {
     if (userService.currentUser.role === UserRole.Student) {
       this.displayedColumns = [
         TABLE_COLUMNS.ID,
