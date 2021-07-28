@@ -218,6 +218,11 @@ export class GithubService {
     octokit.issues.createLabel({owner: ORG_NAME, repo: REPO, name: formattedLabelName, color: labelColor});
   }
 
+    // consider change the name of variable
+    deleteLabel(formattedLabelName: string): void {
+      octokit.issues.deleteLabel({owner: ORG_NAME, repo: REPO, name: formattedLabelName});
+    }
+
   /**
    * Updates a label's information in the current repository.
    * @param labelName - name of existing label
