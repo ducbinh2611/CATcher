@@ -34,6 +34,8 @@ let ORG_NAME = '';
 let MOD_ORG = '';
 let REPO = '';
 let DATA_REPO = '';
+const MAX_ITEMS_PER_PAGE = 100;
+
 let octokit = new Octokit();
 
 @Injectable({
@@ -193,7 +195,13 @@ export class GithubService {
   }
 
   fetchAllLabels(): Observable<Array<{}>> {
-    return from(octokit.issues.listLabelsForRepo({owner: ORG_NAME, repo: REPO, headers: GithubService.IF_NONE_MATCH_EMPTY})).pipe(
+    return from(octokit.issues.listLabelsForRepo({
+      owner: ORG_NAME,
+      repo: REPO,
+      per_page: MAX_ITEMS_PER_PAGE,
+      headers: GithubService.IF_NONE_MATCH_EMPTY
+    }))
+    .pipe(
       map(response => {
         return response['data'];
       }),
@@ -209,6 +217,11 @@ export class GithubService {
   createLabel(formattedLabelName: string, labelColor: string): void {
     octokit.issues.createLabel({owner: ORG_NAME, repo: REPO, name: formattedLabelName, color: labelColor});
   }
+
+    // consider change the name of variable
+    deleteLabel(formattedLabelName: string): void {
+      octokit.issues.deleteLabel({owner: ORG_NAME, repo: REPO, name: formattedLabelName});
+    }
 
   /**
    * Updates a label's information in the current repository.

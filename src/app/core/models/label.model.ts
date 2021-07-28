@@ -21,6 +21,12 @@ export class Label {
       : (this.labelCategory.concat('.', this.labelValue));
   }
 
+  public getCategory(): string {
+    return (this.labelCategory === undefined || this.labelCategory === '')
+      ? ''
+      : this.labelCategory;
+  }
+
   public equals(label: Label) {
     return this.labelValue === label.labelValue
         && this.labelColor === label.labelColor && this.labelCategory === label.labelCategory;

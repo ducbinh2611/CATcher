@@ -16,6 +16,7 @@ const COLOR_LIGHT_TEXT  = 'FFFFFF'; // Light color for text with dark background
 const DISPLAY_NAME_SEVERITY = 'Severity';
 const DISPLAY_NAME_BUG_TYPE = 'Bug Type';
 const DISPLAY_NAME_RESPONSE = 'Response';
+const DISPLAY_NAME_STATUS = 'Status';
 
 const REQUIRED_LABELS = {
   severity: {
@@ -93,7 +94,10 @@ export class LabelService {
   synchronizeRemoteLabels(): Observable<any> {
       return this.githubService.fetchAllLabels().pipe(
         map((response) => {
-          this.ensureRepoHasRequiredLabels(this.parseLabelData(response), LabelService.getRequiredLabelsAsArray());
+          const actualLabels: Label[] = this.parseLabelData(response);
+          this.sanitizeActualLabesl(actualLabels);
+          const requiredLabels: Label[] = LabelService.getRequiredLabelsAsArray();
+          this.ensureRepoHasRequiredLabels(actualLabels, requiredLabels);
           return response;
         })
       );
@@ -113,6 +117,8 @@ export class LabelService {
       case 'responseTag':
       case 'response':
         return LabelService.responseLabels;
+      case 'status':
+        return LabelService.statusLabels;
     }
   }
 
@@ -128,6 +134,8 @@ export class LabelService {
         return DISPLAY_NAME_BUG_TYPE;
       case 'responseTag':
         return DISPLAY_NAME_RESPONSE;
+      case 'status':
+        return DISPLAY_NAME_STATUS;
     }
   }
 
@@ -149,6 +157,40 @@ export class LabelService {
       return WHITE_COLOR;
     } else {
       return existingLabel.labelColor;
+    }
+  }
+
+  private sanitizeActualLabesl(labels: Label[]): void {
+    const invalidLabels: Label[] = [];
+    for (const label of labels) {
+      if (label.getCategory() === '') {
+        continue;
+      } else {
+        this.checkValidityOfCategoryLabel(label, invalidLabels);
+      }
+    }
+    if (invalidLabels.length === 0) {
+      return;
+    } else {
+      for (const invalidLabel of invalidLabels) {
+        this.githubService.deleteLabel(invalidLabel.getFormattedName());
+      }
+      throw new Error('Unexpected error: the repo has invalid labels');
+    }
+  }
+
+  private checkValidityOfCategoryLabel(label: Label, invalidLabels: Label[]) {
+    const labelCategory = label.getCategory();
+    const requiredCategoryLabels = this.getLabelList(labelCategory);
+    let isValid = false;
+    for (const requiredLabel of requiredCategoryLabels) {
+      if (label.getFormattedName() === requiredLabel.getFormattedName()) {
+        isValid = true;
+        break;
+      }
+    }
+    if (!isValid) {
+      invalidLabels.push(label);
     }
   }
 
