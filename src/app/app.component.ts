@@ -38,7 +38,7 @@ export class AppComponent implements AfterViewInit {
   addListenerForOffline() {
     window.addEventListener('offline', (event) => {
       this.errorHandlingService.handleError(new Error("You are not connected to the Internet!"));
-    })
+    });
   }
   /**
    * This listener will prevent the default behaviour of electron to open http links on electron browser itself.
