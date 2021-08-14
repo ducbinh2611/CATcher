@@ -4,6 +4,7 @@ import { AppConfig } from '../environments/environment';
 import { fromEvent, merge, Observable, of } from 'rxjs';
 import { mapTo } from 'rxjs/operators';
 import { LoggingService } from './core/services/logging.service';
+import { ErrorHandlingService } from './core/services/error-handling.service';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +14,7 @@ import { LoggingService } from './core/services/logging.service';
 export class AppComponent implements AfterViewInit {
   isNetworkOnline$: Observable<boolean>;
 
-  constructor(public electronService: ElectronService, logger: LoggingService) {
+  constructor(public electronService: ElectronService, logger: LoggingService, public errorHandlingService: ErrorHandlingService) {
 
     logger.info('AppConfig', AppConfig);
 
@@ -31,8 +32,14 @@ export class AppComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.addListenerForHttpLinks();
+    this.addListenerForOffline();
   }
 
+  addListenerForOffline() {
+    window.addEventListener('offline', (event) => {
+      this.errorHandlingService.handleError(new Error("You are not connected to the Internet!"));
+    })
+  }
   /**
    * This listener will prevent the default behaviour of electron to open http links on electron browser itself.
    * Will use the client's default OS browser to open the link.
